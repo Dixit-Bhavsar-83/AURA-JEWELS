@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AR Bangle Try-On | Aura Jewels</title>
     
     <!-- Tailwind CSS CDN -->
@@ -20,24 +20,51 @@
         }
     </script>
     
-    <!-- A-Frame and AR.js Libraries -->
+    <!-- Stable A-Frame & AR.js CDN Scripts -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.3.2/aframe/build/aframe-ar.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
         .a-canvas {
             width: 100% !important;
             height: 100% !important;
             top: 0 !important;
             left: 0 !important;
+            position: absolute !important;
+            z-index: 1;
+        }
+        /* Style for manual permission button overlay if blocked */
+        #permission-btn {
+            z-index: 9999;
         }
     </style>
 </head>
-<body class="bg-black overflow-hidden select-none font-sans">
+<body class="bg-black select-none font-sans">
+
+    <!-- Manual Camera Activation Banner (If auto-prompt fails) -->
+    <div id="camera-prompt-overlay" class="hidden fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-full bg-brandPink/20 border border-brandPink text-brandPink flex items-center justify-center text-2xl mb-4">
+            <i class="fa-solid fa-camera"></i>
+        </div>
+        <h2 class="text-white text-xl font-bold mb-2">Camera Access Needed</h2>
+        <p class="text-slate-400 text-sm max-w-xs mb-6">Tap below to grant camera access and start the AR try-on experience.</p>
+        <button id="permission-btn" class="px-6 py-3 rounded-full bg-brandGold text-slate-950 font-bold shadow-lg">
+            Allow Camera Access
+        </button>
+    </div>
 
     <!-- Top UI Header Overlay -->
-    <div class="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+    <div class="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
         <a href="/" class="w-10 h-10 rounded-full bg-slate-900/80 border border-brandGold/40 text-brandGold flex items-center justify-center backdrop-blur-md">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
@@ -51,20 +78,23 @@
     <!-- Instruction Badge Overlay -->
     <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-slate-950/80 backdrop-blur-md border border-brandGold/30 text-slate-200 text-xs px-4 py-2 rounded-full shadow-lg flex items-center space-x-2">
         <i class="fa-solid fa-camera-rotate text-brandGold animate-spin"></i>
-        <span>Point camera at **Hiro AR Marker**</span>
+        <span>Point camera at **Hiro Marker**</span>
     </div>
 
     <!-- A-Frame AR Scene -->
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;" vr-mode-ui="enabled: false">
+    <a-scene 
+        embedded 
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;" 
+        vr-mode-ui="enabled: false"
+        renderer="logarithmicDepthBuffer: true; colorManagement: true;">
         
         <a-assets timeout="1000">
-            <!-- GLB Model Asset -->
             <a-asset-item id="bangleModel" src="/static/models/bangle.glb"></a-asset-item>
         </a-assets>
 
-        <!-- Lighting -->
-        <a-entity light="type: ambient; color: #ffffff; intensity: 1.2"></a-entity>
-        <a-entity light="type: directional; color: #ffd700; intensity: 1.5" position="1 4 2"></a-entity>
+        <!-- Dynamic Lighting -->
+        <a-entity light="type: ambient; color: #ffffff; intensity: 1.5"></a-entity>
+        <a-entity light="type: directional; color: #ffd700; intensity: 1.8" position="1 4 2"></a-entity>
 
         <!-- AR Marker (Hiro) -->
         <a-marker preset="hiro" id="bangle-marker">
@@ -72,7 +102,7 @@
             <a-entity id="bangle-container" position="0 0.2 0" rotation="0 0 0"
                       animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
                 
-                <!-- Procedural Fallback Bangles -->
+                <!-- Procedural Fallback Bangle Stack -->
                 <a-entity id="procedural-bangles" scale="0.6 0.6 0.6">
                     <a-torus position="0 -0.4 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
                     <a-torus position="0 -0.25 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
@@ -83,7 +113,7 @@
                     <a-torus position="0 0.5 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
                 </a-entity>
 
-                <!-- Custom GLB Model -->
+                <!-- GLB Model -->
                 <a-entity id="glb-bangle" gltf-model="#bangleModel" scale="1 1 1" position="0 0 0" visible="false"></a-entity>
 
             </a-entity>
@@ -109,7 +139,34 @@
     </div>
 
     <script>
-        // Check if GLB model loads properly
+        // Force Request Camera Access explicitly via browser API
+        async function requestCameraPermission() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: { exact: "environment" } } 
+                }).catch(() => {
+                    // Fallback to default user camera if environment (back camera) fails
+                    return navigator.mediaDevices.getUserMedia({ video: true });
+                });
+                
+                console.log("Camera access verified!");
+                document.getElementById('camera-prompt-overlay').classList.add('hidden');
+            } catch (err) {
+                console.error("Camera permissions denied:", err);
+                document.getElementById('camera-prompt-overlay').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('permission-btn').addEventListener('click', () => {
+            requestCameraPermission();
+        });
+
+        // Trigger on load
+        window.addEventListener('load', () => {
+            requestCameraPermission();
+        });
+
+        // Switch to GLB model if loaded
         const bangleModelAsset = document.querySelector('#bangleModel');
         if (bangleModelAsset) {
             bangleModelAsset.addEventListener('model-loaded', () => {
