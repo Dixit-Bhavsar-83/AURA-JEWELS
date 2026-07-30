@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Jewels | WebAR Bangle Try-On</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandPink: '#BE185D',
+                        brandGold: '#D4AF37'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-brandGold/20 backdrop-blur-md bg-slate-950/80 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brandPink to-brandGold flex items-center justify-center font-bold text-lg text-white shadow-lg">
+                    ✨
+                </div>
+                <span class="text-xl font-serif font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-brandGold to-pink-400">AURA JEWELS</span>
+            </div>
+            <a href="/tryon" class="hidden sm:inline-block px-5 py-2.5 rounded-full border border-brandGold text-brandGold hover:bg-brandGold hover:text-slate-950 transition font-medium text-sm">
+                Instant AR Try-On
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="max-w-6xl mx-auto px-6 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        
+        <!-- Left Content -->
+        <div class="space-y-6">
+            <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-brandPink/10 border border-brandPink/30 text-pink-300 text-xs font-semibold tracking-wide uppercase">
+                <i class="fa-solid fa-wand-magic-sparkles text-brandGold"></i>
+                <span>Next-Gen WebAR Experience</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-serif font-bold leading-tight text-white">
+                Experience Royal <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-brandGold to-yellow-200">Kundan Bangles</span> on Your Hand
+            </h1>
+            
+            <p class="text-slate-400 text-base md:text-lg">
+                Step into the future of luxury jewelry shopping. Try our handcrafted velvet and gold bridal chura set in augmented reality right from your mobile browser.
+            </p>
+
+            <div class="pt-2 flex flex-col sm:flex-row gap-4">
+                <a href="/tryon" class="px-8 py-4 rounded-full bg-gradient-to-r from-brandPink to-pink-600 hover:from-pink-600 hover:to-brandPink text-white font-bold text-center shadow-lg shadow-brandPink/30 transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-camera text-brandGold text-lg"></i>
+                    <span>Open Camera & Try On</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Visual Card -->
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-brandPink to-brandGold rounded-3xl blur-lg opacity-40 group-hover:opacity-60 transition duration-500"></div>
+            <div class="relative bg-slate-900 border border-slate-800 rounded-3xl p-4 overflow-hidden">
+                <div class="relative h-80 rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center">
+                    <div class="text-center p-6">
+                        <span class="text-5xl">👑</span>
+                        <h3 class="text-xl font-bold text-brandGold mt-4">Royal Bangle Collection</h3>
+                        <p class="text-slate-400 text-sm mt-2">Magenta Pink Velvet & Kundan Gold Set</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

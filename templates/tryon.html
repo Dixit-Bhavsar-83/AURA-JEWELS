@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AR Bangle Try-On | Aura Jewels</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandPink: '#BE185D',
+                        brandGold: '#D4AF37'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- A-Frame and AR.js Libraries -->
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .a-canvas {
+            width: 100% !important;
+            height: 100% !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+    </style>
+</head>
+<body class="bg-black overflow-hidden select-none font-sans">
+
+    <!-- Top UI Header Overlay -->
+    <div class="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+        <a href="/" class="w-10 h-10 rounded-full bg-slate-900/80 border border-brandGold/40 text-brandGold flex items-center justify-center backdrop-blur-md">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div class="text-center">
+            <h1 class="text-white font-serif font-bold text-base tracking-wide">Royal Kundan Chura Set</h1>
+            <p class="text-xs text-brandGold font-medium">WebAR Virtual Try-On</p>
+        </div>
+        <div class="w-10"></div>
+    </div>
+
+    <!-- Instruction Badge Overlay -->
+    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-slate-950/80 backdrop-blur-md border border-brandGold/30 text-slate-200 text-xs px-4 py-2 rounded-full shadow-lg flex items-center space-x-2">
+        <i class="fa-solid fa-camera-rotate text-brandGold animate-spin"></i>
+        <span>Point camera at **Hiro AR Marker**</span>
+    </div>
+
+    <!-- A-Frame AR Scene -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;" vr-mode-ui="enabled: false">
+        
+        <a-assets timeout="1000">
+            <!-- GLB Model Asset -->
+            <a-asset-item id="bangleModel" src="/static/models/bangle.glb"></a-asset-item>
+        </a-assets>
+
+        <!-- Lighting -->
+        <a-entity light="type: ambient; color: #ffffff; intensity: 1.2"></a-entity>
+        <a-entity light="type: directional; color: #ffd700; intensity: 1.5" position="1 4 2"></a-entity>
+
+        <!-- AR Marker (Hiro) -->
+        <a-marker preset="hiro" id="bangle-marker">
+            
+            <a-entity id="bangle-container" position="0 0.2 0" rotation="0 0 0"
+                      animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+                
+                <!-- Procedural Fallback Bangles -->
+                <a-entity id="procedural-bangles" scale="0.6 0.6 0.6">
+                    <a-torus position="0 -0.4 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
+                    <a-torus position="0 -0.25 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
+                    <a-torus position="0 -0.1 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
+                    <a-torus position="0 0.05 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D8006C" metalness="0.1" roughness="0.8"></a-torus>
+                    <a-torus position="0 0.2 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
+                    <a-torus position="0 0.35 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
+                    <a-torus position="0 0.5 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
+                </a-entity>
+
+                <!-- Custom GLB Model -->
+                <a-entity id="glb-bangle" gltf-model="#bangleModel" scale="1 1 1" position="0 0 0" visible="false"></a-entity>
+
+            </a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- Bottom Action Card -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 p-5 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent">
+        <div class="max-w-md mx-auto bg-slate-900/95 border border-brandGold/30 rounded-2xl p-4 shadow-2xl backdrop-blur-md flex items-center justify-between">
+            <div>
+                <span class="text-xs text-brandGold font-semibold uppercase tracking-wider">In Stock</span>
+                <h2 class="text-white font-bold text-base">Royal Pink & Gold Set</h2>
+                <p class="text-slate-300 text-sm font-semibold">₹4,999</p>
+            </div>
+            
+            <button onclick="alert('Order Placed Successfully!')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brandGold to-yellow-500 hover:from-yellow-500 hover:to-brandGold text-slate-950 font-bold text-sm shadow-lg shadow-brandGold/20 transition flex items-center space-x-2">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span>Buy Now</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Check if GLB model loads properly
+        const bangleModelAsset = document.querySelector('#bangleModel');
+        if (bangleModelAsset) {
+            bangleModelAsset.addEventListener('model-loaded', () => {
+                document.querySelector('#procedural-bangles').setAttribute('visible', 'false');
+                document.querySelector('#glb-bangle').setAttribute('visible', 'true');
+            });
+        }
+    </script>
+</body>
+</html>

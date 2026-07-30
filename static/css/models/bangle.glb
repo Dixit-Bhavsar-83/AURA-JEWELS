@@ -1,0 +1,23 @@
+<!-- Procedural Bangle Stack Component -->
+<a-entity id="procedural-bangle-stack" position="0 0 0" scale="0.6 0.6 0.6">
+  <!-- Outer Gold Kundan Border (Left End) -->
+  <a-torus position="0 -0.45 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
+  
+  <!-- Deep Pink Velvet Bangle 1 -->
+  <a-torus position="0 -0.30 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
+  
+  <!-- Intricate Gold Middle Band -->
+  <a-torus position="0 -0.15 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
+  
+  <!-- Central Deep Pink Velvet Bangle -->
+  <a-torus position="0 0 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D8006C" metalness="0.1" roughness="0.8"></a-torus>
+
+  <!-- Intricate Gold Middle Band -->
+  <a-torus position="0 0.15 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
+  
+  <!-- Deep Pink Velvet Bangle 2 -->
+  <a-torus position="0 0.30 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
+  
+  <!-- Outer Gold Kundan Border (Right End) -->
+  <a-torus position="0 0.45 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
+</a-entity>
