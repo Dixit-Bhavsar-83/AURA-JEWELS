@@ -20,43 +20,47 @@
         }
     </script>
     
-    <!-- Stable A-Frame & AR.js Libraries -->
+    <!-- A-Frame Library -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* Essential CSS Fixes for AR.js Video Camera Feed */
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
-            background-color: transparent !important;
+            background-color: #000;
         }
 
-        #arjs-video {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            z-index: -2 !important;
+        /* Direct Live Video Feed Layer */
+        #webcam-feed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 1;
         }
 
+        /* Transparent A-Frame 3D Layer */
         .a-canvas {
-            position: absolute !important;
+            position: fixed !important;
             top: 0 !important;
             left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            z-index: 1 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 2 !important;
+            background: transparent !important;
         }
     </style>
 </head>
 <body class="select-none font-sans">
+
+    <!-- Direct HTML5 Native Camera Feed -->
+    <video id="webcam-feed" autoplay playsinline muted></video>
 
     <!-- Top UI Header Overlay -->
     <div class="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
@@ -73,46 +77,37 @@
     <!-- Instruction Badge Overlay -->
     <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-slate-950/80 backdrop-blur-md border border-brandGold/30 text-slate-200 text-xs px-4 py-2 rounded-full shadow-lg flex items-center space-x-2">
         <i class="fa-solid fa-camera-rotate text-brandGold animate-spin"></i>
-        <span>Point camera at **Hiro Marker**</span>
+        <span>Live AR Bangle Preview</span>
     </div>
 
-    <!-- A-Frame AR Scene -->
-    <a-scene 
-        embedded 
-        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;" 
-        vr-mode-ui="enabled: false"
-        renderer="transparent: true; alpha: true; antialias: true;">
-        
-        <a-assets timeout="1000">
+    <!-- Transparent 3D Scene Layer -->
+    <a-scene embedded vr-mode-ui="enabled: false" renderer="transparent: true; alpha: true;">
+        <a-assets>
             <a-asset-item id="bangleModel" src="/static/models/bangle.glb"></a-asset-item>
         </a-assets>
 
-        <!-- Lighting -->
+        <!-- Dynamic Lighting -->
         <a-entity light="type: ambient; color: #ffffff; intensity: 1.5"></a-entity>
         <a-entity light="type: directional; color: #ffd700; intensity: 1.8" position="1 4 2"></a-entity>
 
-        <!-- AR Marker (Hiro) -->
-        <a-marker preset="hiro" id="bangle-marker">
+        <!-- 3D Bangle Stack Overlay (Centered on Live Camera Feed) -->
+        <a-entity id="bangle-container" position="0 0 -2.5" rotation="15 0 0"
+                  animation="property: rotation; to: 15 360 0; loop: true; dur: 10000; easing: linear">
             
-            <a-entity id="bangle-container" position="0 0.2 0" rotation="0 0 0"
-                      animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
-                
-                <!-- Procedural Fallback Bangle Stack -->
-                <a-entity id="procedural-bangles" scale="0.6 0.6 0.6">
-                    <a-torus position="0 -0.4 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
-                    <a-torus position="0 -0.25 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
-                    <a-torus position="0 -0.1 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
-                    <a-torus position="0 0.05 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D8006C" metalness="0.1" roughness="0.8"></a-torus>
-                    <a-torus position="0 0.2 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
-                    <a-torus position="0 0.35 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
-                    <a-torus position="0 0.5 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
-                </a-entity>
-
-                <!-- GLB Model Node -->
-                <a-entity id="glb-bangle" gltf-model="#bangleModel" scale="1 1 1" position="0 0 0" visible="false"></a-entity>
-
+            <!-- Procedural Fallback Bangles -->
+            <a-entity id="procedural-bangles" scale="0.6 0.6 0.6">
+                <a-torus position="0 -0.4 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
+                <a-torus position="0 -0.25 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
+                <a-torus position="0 -0.1 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
+                <a-torus position="0 0.05 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D8006C" metalness="0.1" roughness="0.8"></a-torus>
+                <a-torus position="0 0.2 0" rotation="90 0 0" radius="1.02" radius-tubular="0.07" color="#FFD700" metalness="0.95" roughness="0.15"></a-torus>
+                <a-torus position="0 0.35 0" rotation="90 0 0" radius="1.0" radius-tubular="0.06" color="#C2185B" metalness="0.1" roughness="0.8"></a-torus>
+                <a-torus position="0 0.5 0" rotation="90 0 0" radius="1.0" radius-tubular="0.08" color="#D4AF37" metalness="0.9" roughness="0.2"></a-torus>
             </a-entity>
-        </a-marker>
+
+            <!-- GLB Model Node -->
+            <a-entity id="glb-bangle" gltf-model="#bangleModel" scale="1 1 1" position="0 0 0" visible="false"></a-entity>
+        </a-entity>
 
         <a-entity camera></a-entity>
     </a-scene>
@@ -133,19 +128,33 @@
         </div>
     </div>
 
+    <!-- Native Camera Initialization Script -->
     <script>
-        // Ensure video element fits properly behind A-Frame scene
-        window.addEventListener('camera-init', () => {
-            const video = document.querySelector('#arjs-video');
-            if (video) {
-                video.style.position = 'absolute';
-                video.style.top = '0px';
-                video.style.left = '0px';
-                video.style.zIndex = '-2';
+        async function startCamera() {
+            const video = document.getElementById('webcam-feed');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: "environment" } },
+                    audio: false
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                console.warn("Back camera failed, trying front camera...", err);
+                try {
+                    const fallbackStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    });
+                    video.srcObject = fallbackStream;
+                } catch (e) {
+                    alert("Unable to access camera. Please enable camera permissions in Chrome settings.");
+                }
             }
-        });
+        }
 
-        // Switch to GLB model if loaded successfully
+        window.addEventListener('load', startCamera);
+
+        // Switch to GLB model if available
         const bangleModelAsset = document.querySelector('#bangleModel');
         if (bangleModelAsset) {
             bangleModelAsset.addEventListener('model-loaded', () => {
